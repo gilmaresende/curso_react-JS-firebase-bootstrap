@@ -14,6 +14,7 @@ function Login() {
       .signInWithEmailAndPassword(email, senha)
       .then((response) => {
         {
+          console.log(response.user.uid);
           setMsgTipo("SUCESSO");
         }
       })
