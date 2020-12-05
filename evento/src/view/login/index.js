@@ -1,6 +1,7 @@
 import "./login.css";
 
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Firebase from "../../config/firebase";
 import "firebase/auth";
 
@@ -28,13 +29,6 @@ function Login() {
       {" "}
       <form className="form-signin mx-auto">
         <div className="text-center mb-4">
-          {/* <img
-            className="mb-4"
-            src="/docs/4.5/assets/brand/bootstrap-solid.svg"
-            alt=""
-            width="72"
-            height="72"
-          /> */}
           <h1 className="h3 mb-3 font-weight-normal text-white font-weight-bold">
             Login
           </h1>
@@ -77,14 +71,15 @@ function Login() {
             ""
           )}
         </div>
+
         <div className="opcoes-login mt-5 text-center">
           <a href="#" className="mx-2">
             Recuperar Senha
           </a>
           <span className="text-white">&#9733;</span>
-          <a href="#" className="mx-2">
+          <Link to="novo-usuario" className="mx-2">
             Quero Cadastrar
-          </a>
+          </Link>
         </div>
       </form>
     </div>

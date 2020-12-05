@@ -1,6 +1,16 @@
 import React from "react";
+import { HashRouter, Route, Switch } from "react-router-dom";
+
+import Rotas from "./rotas";
+/*Paginas*/
+
+
 function App() {
-  return <h1>Ola Mundo</h1>;
+  return (
+    <div>
+      <Rotas></Rotas>
+    </div>
+  );
 }
 
 export default App;
