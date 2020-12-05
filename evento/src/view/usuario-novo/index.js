@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Firebase from "../../config/firebase";
+import NavBar from "../../components/navbar/";
 
 import "firebase/auth";
 
@@ -49,49 +50,52 @@ function NovoUsuario() {
   }
 
   return (
-    <div className="form-cadastro">
-      <form className="text-center form-login mx-auto mt-5">
-        <h1 chassName="h3 mb-3 text-black font-weight-bold">Novo Cadastro</h1>{" "}
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          type="mail"
-          className="form-control my-2"
-          placeholder="Email"
-        ></input>
-        <input
-          onChange={(e) => setSenha(e.target.value)}
-          type="password"
-          className="form-control my-2"
-          placeholder="Senha"
-        ></input>
-        {carregando ? (
-          <div class="spinner-border text-danger" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        ) : (
-          <button
-            onClick={cadastrar}
-            type="button"
-            className="btn btn-lg btn-block mt-3 mb-5 btn-cadastro"
-          >
-            Cadastrar
-          </button>
-        )}
-        <div className="msg-login text-black text-center my-5">
-          {msgTipo === "SUCESSO" ? (
-            <span>
-              <strong>WoW!</strong> Usuário Cadastrado com Sucesso! &#128526;
-            </span>
-          ) : msgTipo === "ERRO" ? (
-            <span>
-              <strong> Ops!</strong>
-              {msg} &#128546;
-            </span>
+    <div>
+      <NavBar />
+      <div className="form-cadastro">
+        <form className="text-center form-login mx-auto mt-5">
+          <h1 chassName="h3 mb-3 text-black font-weight-bold">Novo Cadastro</h1>{" "}
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            type="mail"
+            className="form-control my-2"
+            placeholder="Email"
+          ></input>
+          <input
+            onChange={(e) => setSenha(e.target.value)}
+            type="password"
+            className="form-control my-2"
+            placeholder="Senha"
+          ></input>
+          {carregando ? (
+            <div className="spinner-border text-danger" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
           ) : (
-            ""
+            <button
+              onClick={cadastrar}
+              type="button"
+              className="btn btn-lg btn-block mt-3 mb-5 btn-cadastro"
+            >
+              Cadastrar
+            </button>
           )}
-        </div>
-      </form>
+          <div className="msg-login text-black text-center my-5">
+            {msgTipo === "SUCESSO" ? (
+              <span>
+                <strong>WoW!</strong> Usuário Cadastrado com Sucesso! &#128526;
+              </span>
+            ) : msgTipo === "ERRO" ? (
+              <span>
+                <strong> Ops!</strong>
+                {msg} &#128546;
+              </span>
+            ) : (
+              ""
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
