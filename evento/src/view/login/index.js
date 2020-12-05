@@ -1,23 +1,28 @@
 import "./login.css";
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import Firebase from "../../config/firebase";
 import "firebase/auth";
+
+import { useSelector, useDispatch } from "react-redux";
 
 function Login() {
   const [email, setEmail] = useState();
   const [senha, setSenha] = useState();
   const [msgTipo, setMsgTipo] = useState();
 
+  const dispatch = useDispatch();
+
   function logar() {
     Firebase.auth()
       .signInWithEmailAndPassword(email, senha)
       .then((response) => {
-        {
-          console.log(response.user.uid);
-          setMsgTipo("SUCESSO");
-        }
+        setMsgTipo("SUCESSO");
+        setTimeout(() => {
+          dispatch({ type: "LOG_IN", usuarioEmail: email });
+        }, 2000);
+        console.log(response.user.uid);
       })
       .catch((error) => {
         setMsgTipo("ERRO");
@@ -26,9 +31,12 @@ function Login() {
 
   return (
     <div className="login-content d-flex aling-center">
-      {" "}
+      {useSelector((state) => state.usuarioLogado) > 0 ? (
+        <Redirect to="/" />
+      ) : null}
       <form className="form-signin mx-auto">
         <div className="text-center mb-4">
+          <i class="far fa-smile-wink text-white fa-5x"></i>
           <h1 className="h3 mb-3 font-weight-normal text-white font-weight-bold">
             Login
           </h1>
@@ -73,11 +81,11 @@ function Login() {
         </div>
 
         <div className="opcoes-login mt-5 text-center">
-          <a href="#" className="mx-2">
+          <Link to="/usuario-recuperar-senha" className="mx-2">
             Recuperar Senha
-          </a>
+          </Link>
           <span className="text-white">&#9733;</span>
-          <Link to="novo-usuario" className="mx-2">
+          <Link to="/novo-usuario" className="mx-2">
             Quero Cadastrar
           </Link>
         </div>

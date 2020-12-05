@@ -1,12 +1,14 @@
 import React from "react";
+import store from "../../src/store";
 
 import Rotas from "./rotas";
+import { Provider } from "react-redux";
 
 function App() {
   return (
-    <div>
-      <Rotas></Rotas>
-    </div>
+    <Provider store={store}>
+      <Rotas />
+    </Provider>
   );
 }
 
