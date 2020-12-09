@@ -23,7 +23,7 @@ function Rotas() {
           component={UsuarioRecuperarSenha}
         />
         <Route exact path="/evento-cadastro" component={EventoCadastro} />
-        <Route exact path="/evento-detalhes" component={EventoDetalhes} />
+        <Route path="/evento-detalhes/:id" component={EventoDetalhes} />
       </Switch>
     </HashRouter>
   );
