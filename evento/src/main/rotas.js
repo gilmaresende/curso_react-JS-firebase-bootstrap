@@ -9,6 +9,7 @@ import UsuarioRecuperarSenha from "../view/usuario-recuperar-senha";
 import EventoCadastro from "../view/evento-cadastro";
 import EventoDetalhes from "../view/evento-detalhes";
 
+
 function Rotas() {
   return (
     <HashRouter>
@@ -24,6 +25,7 @@ function Rotas() {
         />
         <Route exact path="/evento-cadastro" component={EventoCadastro} />
         <Route path="/evento-detalhes/:id" component={EventoDetalhes} />
+        <Route path="/evento-editar/:id" component={EventoCadastro} />
       </Switch>
     </HashRouter>
   );

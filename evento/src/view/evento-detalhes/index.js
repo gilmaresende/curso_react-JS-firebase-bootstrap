@@ -13,22 +13,35 @@ function EventoDetalhes(props) {
   const [carregando, setCarregando] = useState(1);
 
   useEffect(() => {
-    Firebase.firestore()
-      .collection("eventos")
-      .doc(props.match.params.id)
-      .get()
-      .then((response) => {
-        setEvento(response.data());
+    if (carregando) {
+      Firebase.firestore()
+        .collection("eventos")
+        .doc(props.match.params.id)
+        .get()
+        .then((response) => {
+          setEvento(response.data());
+          Firebase.firestore()
+            .collection("eventos")
+            .doc(props.match.params.id)
+            .update("visualizacoes", response.data().visualizacoes + 1);
 
-        Firebase.storage()
-          .ref(`imagens/${evento.foto}`)
-          .getDownloadURL()
-          .then((url) => {
-            setUrlImg(url);
-            setCarregando(0);
-          });
-      });
-  });
+          Firebase.storage()
+            .ref(`imagens/${response.data().foto}`)
+            .getDownloadURL()
+            .then((url) => {
+              setUrlImg(url);
+              setCarregando(0);
+            });
+        });
+    } else {
+      Firebase.storage()
+        .ref(`imagens/${evento.foto}`)
+        .getDownloadURL()
+        .then((url) => {
+          setUrlImg(url);
+        });
+    }
+  }, []);
 
   return (
     <>
@@ -47,7 +60,7 @@ function EventoDetalhes(props) {
 
               <div className="col-12 text-right mt-1 visualicacao">
                 <i class="far fa-eye"></i>
-                <samp>{evento.visualizacoes}</samp>
+                <samp>{evento.visualizacoes + 1}</samp>
               </div>
 
               <h3 className="mx-auto mt-5 titulo">
@@ -89,7 +102,10 @@ function EventoDetalhes(props) {
               <p>{evento.detalhes}</p>
             </div>
             {usuarioLogado === evento.usuarioEmail ? (
-              <Link to="" className="btn-editar">
+              <Link
+                to={`/evento-editar/${props.match.params.id}`}
+                className="btn-editar"
+              >
                 <i className="fas fa-pen-square fa-3x"></i>
               </Link>
             ) : null}

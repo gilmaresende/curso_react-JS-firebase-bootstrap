@@ -1,6 +1,6 @@
 import "./evento-cadastro.css";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import Firebase from "../../config/firebase";
 import "firebase/auth";
@@ -8,19 +8,67 @@ import NavBar from "../../components/navbar/";
 
 import { useSelector, useDispatch } from "react-redux";
 
-function EventoCadastro() {
+function EventoCadastro(props) {
   const [msgTipo, setMsgTipo] = useState();
   const [titulo, setTitulo] = useState();
   const [tipo, setTipo] = useState();
   const [detalhes, setDetalhes] = useState();
   const [data, setData] = useState();
   const [hora, setHora] = useState();
-  const [foto, setFoto] = useState();
   const [carregando, setCarregando] = useState();
+  const [fotoAtual, setFotoAtual] = useState();
+  const [fotoNova, setFotoNova] = useState();
+
   const usuarioEmail = useSelector((state) => state.usuarioEmail);
 
   const storage = Firebase.storage();
   const db = Firebase.firestore();
+
+  useEffect(() => {
+    Firebase.firestore()
+      .collection("eventos")
+      .doc(props.match.params.id)
+      .get()
+      .then((response) => {
+        setTitulo(response.data().titulo);
+        setTipo(response.data().tipo);
+        setDetalhes(response.data().detalhes);
+        setHora(response.data().hora);
+        setData(response.data().data);
+        setFotoAtual(response.data().foto);
+      });
+  }, []);
+
+  async function atualizarEvento() {
+    setCarregando(true);
+    setMsgTipo(null);
+
+    const dataSave = {
+      titulo,
+      tipo,
+      detalhes,
+      data,
+      hora,
+      foto: fotoNova ? fotoNova.name : fotoAtual,
+    };
+    if (fotoNova) {
+      await storage
+        .ref(`imagens/${fotoNova.name}`)
+        .put(fotoNova)
+        .then((response) => {});
+    }
+
+    db.collection("eventos")
+      .doc(props.match.params.id)
+      .update(dataSave)
+      .then((reseponse2) => {
+        setMsgTipo("SUCESSO");
+      })
+      .catch((erro) => {
+        setMsgTipo("ERRO");
+      });
+    setCarregando(false);
+  }
 
   async function cadastrarEvento() {
     setCarregando(true);
@@ -34,14 +82,14 @@ function EventoCadastro() {
       hora,
       usuarioEmail: usuarioEmail,
       visualizacoes: 0,
-      foto: foto.name,
+      foto: fotoNova.name,
       public: 1,
       dataCadastro: new Date(),
     };
 
     await storage
-      .ref(`imagens/${foto.name}`)
-      .put(foto)
+      .ref(`imagens/${fotoNova.name}`)
+      .put(fotoNova)
       .then((response) => {
         db.collection("eventos")
           .add(dataSave)
@@ -60,12 +108,15 @@ function EventoCadastro() {
       <NavBar />
       <div className="col-12 mt-5">
         <div className="row">
-          <h3 className="mx-auto font-weight-bold">Novo Evento</h3>
+          <h3 className="mx-auto font-weight-bold">
+            {!props.match.params.id ? "Novo Evento" : "Editar Evento"}
+          </h3>
         </div>
         <form>
           <div className="form-group">
             <label>Título:</label>
             <input
+              value={titulo && titulo}
               onChange={(e) => setTitulo(e.target.value)}
               type="text"
               className="form-control"
@@ -74,6 +125,7 @@ function EventoCadastro() {
           <div className="form-group">
             <label>Tipo do Evento:</label>
             <select
+              value={tipo && tipo}
               onChange={(e) => setTipo(e.target.value)}
               className="form-control"
             >
@@ -89,6 +141,7 @@ function EventoCadastro() {
           <div className="form-group">
             <label>Descrição:</label>
             <textarea
+              value={detalhes && detalhes}
               onChange={(e) => setDetalhes(e.target.value)}
               rows="3"
               type="text"
@@ -99,6 +152,7 @@ function EventoCadastro() {
             <div className="col-6">
               <label>Data:</label>
               <input
+                value={data && data}
                 onChange={(e) => setData(e.target.value)}
                 type="date"
                 className="form-control"
@@ -107,6 +161,7 @@ function EventoCadastro() {
             <div className="col-6">
               <label>Hora:</label>
               <input
+                value={hora && hora}
                 onChange={(e) => setHora(e.target.value)}
                 type="time"
                 className="form-control"
@@ -116,7 +171,7 @@ function EventoCadastro() {
           <div className="form-group">
             <label>Upload da Foto:</label>
             <input
-              onChange={(e) => setFoto(e.target.files[0])}
+              onChange={(e) => setFotoNova(e.target.files[0])}
               type="file"
               className="form-control"
             />
@@ -128,11 +183,15 @@ function EventoCadastro() {
               </div>
             ) : (
               <button
-                onClick={cadastrarEvento}
+                onClick={
+                  props.match.params.id ? atualizarEvento : cadastrarEvento
+                }
                 type="button"
                 className="btn btn-lg btn-block mt-3 mb-5 btn-cadastro"
               >
-                Publicar Evento
+                {!props.match.params.id
+                  ? "Publicar Evento"
+                  : "Atualizar Evento"}
               </button>
             )}
           </div>
