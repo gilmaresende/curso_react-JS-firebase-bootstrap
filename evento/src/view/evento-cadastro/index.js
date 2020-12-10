@@ -25,18 +25,20 @@ function EventoCadastro(props) {
   const db = Firebase.firestore();
 
   useEffect(() => {
-    Firebase.firestore()
-      .collection("eventos")
-      .doc(props.match.params.id)
-      .get()
-      .then((response) => {
-        setTitulo(response.data().titulo);
-        setTipo(response.data().tipo);
-        setDetalhes(response.data().detalhes);
-        setHora(response.data().hora);
-        setData(response.data().data);
-        setFotoAtual(response.data().foto);
-      });
+    if (props.match.params.id) {
+      Firebase.firestore()
+        .collection("eventos")
+        .doc(props.match.params.id)
+        .get()
+        .then((response) => {
+          setTitulo(response.data().titulo);
+          setTipo(response.data().tipo);
+          setDetalhes(response.data().detalhes);
+          setHora(response.data().hora);
+          setData(response.data().data);
+          setFotoAtual(response.data().foto);
+        });
+    }
   }, []);
 
   async function atualizarEvento() {

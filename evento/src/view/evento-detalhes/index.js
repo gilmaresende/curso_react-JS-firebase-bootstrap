@@ -1,7 +1,7 @@
 import "./evento-detalhes.css";
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Firebase from "../../config/firebase";
 import NavBar from "../../components/navbar/";
@@ -11,6 +11,17 @@ function EventoDetalhes(props) {
   const [urlImg, setUrlImg] = useState();
   const usuarioLogado = useSelector((state) => state.usuarioEmail);
   const [carregando, setCarregando] = useState(1);
+  const [excluido, setExcluido] = useState(0);
+
+  function removerEvento() {
+    Firebase.firestore()
+      .collection("eventos")
+      .doc(props.match.params.id)
+      .delete()
+      .then(() => {
+        setExcluido(1);
+      });
+  }
 
   useEffect(() => {
     if (carregando) {
@@ -46,6 +57,7 @@ function EventoDetalhes(props) {
   return (
     <>
       <NavBar />
+      {excluido ? <Redirect to="/" /> : null}
       <div className="container-fluid">
         {carregando ? (
           <div className="row mt-5">
@@ -108,6 +120,16 @@ function EventoDetalhes(props) {
               >
                 <i className="fas fa-pen-square fa-3x"></i>
               </Link>
+            ) : null}
+
+            {usuarioLogado === evento.usuarioEmail ? (
+              <button
+                onClick={removerEvento}
+                type="button"
+                className="btn btn-lg btn-block mt-3 mb-5 btn-cadastro"
+              >
+                "Remover Evento"
+              </button>
             ) : null}
           </div>
         )}
